@@ -8,24 +8,58 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="canvas"></div>
+    <canvas id="canvas"></canvas>;
     <script>
-      canvas.onclick = e => {
-        console.log(e.clientX);
-        console.log(e.clientY);
-        let div = document.createElement("div");
-        div.style.position = "absolute";
-        div.style.left = e.clientX + "px";
-        div.style.top = e.clientY + "px";
-        div.style.border = "1px solid red";
-        div.style.width = "6px";
-        div.style.height = "6px";
-        div.style.borderRadius = "50%";
-        div.style.marginTop = "-3px";
-        div.style.marginLeft = "-3px";
-        div.style.background = "black";
-        canvas.appendChild(div);
-      };
+      let canvas = document.getElementById("canvas");
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = document.documentElement.clientHeight;
+      let ctx = canvas.getContext("2d");
+      ctx.fillStyle = "black";
+      ctx.strokeStyle = "none";
+      // stroke：描边，fill：填充
+
+      function drawLine(x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stoke();
+      }
+      var last;
+      // 画线函数
+      let isTouchDevice = "ontouchstart" in document.documentElement;
+      console.log(isTouchDevice);
+      if (isTouchDevice) {
+        canvas.ontouchmove = e => {
+          console.log(e);
+          let x = e.touches[0].clientX;
+          let y = e.touches[0].clientY;
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, 2 * Math.PI);
+          // 依次是原心，r，和角度范围
+          ctx.stroke();
+          ctx.fill();
+        };
+      } else {
+        let painting = false;
+        canvas.onmousedown = () => {
+          painting = true;
+        };
+        canvas.onmousemove = e => {
+          // e是接受浏览器调用的相关事件的参数可以是任意名字
+          if (painting === true) {
+            ctx.beginPath();
+            ctx.arc(e.clientX, e.clientY, 5, 0, 2 * Math.PI);
+            // 依次是原心，r，和角度范围
+            ctx.stroke();
+            ctx.fill();
+          } else {
+            console.log("1");
+          }
+        };
+        canvas.onmouseup = () => {
+          painting = false;
+        };
+      }
     </script>
   </body>
 </html>
